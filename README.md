@@ -8,7 +8,7 @@ The main purpose of analyzing police shootings from 2015-2020 in the United Stat
 
 This is a research project from 2020, I may or may not contribute to it again but I needed to perform some cleaning up and formatting adjustments for it to be GitHub compatible and I'm uploading it for viewing.
 
-To simply view, open the Police-Shootings-in-the-US.md file.
+To simply view, [open the Police-Shootings-in-the-US.md file.](https://github.com/Dream3223/Police-Shootings-in-the-US/blob/main/Police-Shootings-in-the-US.md)
 
 ## Getting Started
 
