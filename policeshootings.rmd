@@ -1,0 +1,365 @@
+---
+title: "Police Shootings in the US"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+editor_options:
+  chunk_output_type: inline
+---
+
+# Libraries
+
+```{r}
+suppressMessages(library(foreign))
+suppressMessages(library(tidyverse))
+suppressMessages(library(ggplot2))
+suppressMessages(library(tigerstats))
+suppressMessages(library(ggplot2))
+suppressMessages(library(plyr))
+```
+
+
+# The Data
+The data I will be using are from [The Washington Post](https://www.washingtonpost.com/graphics/investigations/police-shootings-database/) article, the data: [GitHub](https://github.com/washingtonpost/data-police-shootings)
+
+**as identified in the article:**
+
+**id:** a unique identifier for each victim
+
+**name:** the name of the victim
+
+**date:** the date of the fatal shooting in YYYY-MM-DD format
+
+**manner_of_death:**
+* shot
+* shot and Tasered
+
+**armed:** indicates that the victim was armed with some sort of implement that a police officer believed could inflict harm
+
+* **undetermined:** it is not known whether or not the victim had a weapon
+* **unknown:** the victim was armed, but it is not known what the object was
+* **unarmed:** the victim was not armed
+
+**age:** the age of the victim
+
+**gender:** the gender of the victim. The Post identifies victims by the gender they identify with if reports indicate that it differs from their biological sex.
+
+* **M:** Male
+* **F:** Female
+* **None:** unknown
+
+**race:**
+
+* **W:** White, non-Hispanic
+* **B:** Black, non-Hispanic
+* **A:** Asian
+* **N:** Native American
+* **H:** Hispanic
+* **O:** Other
+* **None:** unknown
+
+**city:** the municipality where the fatal shooting took place. Note that in some cases this field may contain a county name if a more specific municipality is unavailable or unknown.
+
+**state:** two-letter postal code abbreviation
+
+**signs of mental illness:** News reports have indicated the victim had a history of mental health issues, expressed suicidal intentions or was experiencing mental distress at the time of the shooting.
+
+**flee:** News reports have indicated the victim was moving away from officers
+
+* Foot
+* Car
+* Not fleeing
+
+The threat column and the fleeing column are not necessarily related. For example, there is an incident in which the suspect is fleeing and at the same time turns to fire at gun at the officer. Also, attacks represent a status immediately before fatal shots by police while fleeing could begin slightly earlier and involve a chase.
+
+**body_camera:** News reports have indicated an officer was wearing a body camera and it may have recorded some portion of the incident.
+
+**latitude and longitude:** the location of the shooting expressed as WGS84 coordinates, geocoded from addresses. The coordinates are rounded to 3 decimal places, meaning they have a precision of about 80-100 meters within the contiguous U.S."
+
+
+# The Study
+The main purpose of analyzing police shootings over the last 5 years in the United States is to determine if there's any patterns with individuals involved in the shootings, whether it's with race, location, mental stability, etc. The goals of this research are to simply examine the variables related to fatal police shootings and determine any sort of correlations or patterns between them. For most of the data analysis/exploration, since the majority of variables are characters and not numeric, I'll be using xtabs functions, giving the totals of each variable given another variable. I'll also be showing percentages when it seems beneficial for clarity or further examination of the variables in question. 
+
+(With the xtabs plots you'll see for most of the variable testing, the main sign of differences between the variable in question, whether gender, race, etc. is the different size of the bars in regard to their length on the Y axis.)
+
+**The main questions I'll be answering and expounding upon are as follows:**
+
+**1.** Are there major differences between Male and Female circumstances in fatal police shootings?
+
+**2.** Are different races more likely to be involved in fatal police shootings with similar situations?
+
+**3.** Are different states more likely to have fatal police shootings and if so, why?
+
+
+```{r}
+police <- read.csv("fatal-police-shootings-data.csv")
+head(police)
+colnames(police)
+```
+# Analysis
+
+**Average age and standard deviation of the individuals involved in the involved police shootings**
+
+I was expecting the mean age to be a  little bit lower but with such a high standard deviation it makes sense that most people involved in police shootings aren't at the extremes of the age spectrum (very old/very young).
+
+```{r}
+mean(police$age, na.rm=TRUE)
+sd(police$age, na.rm=TRUE)
+```
+
+# Gender
+
+##Are there major differences between Male and Female circumstances in fatal police shootings?##
+
+**The spread of male/female individuals involved in police shootings**
+
+```{r}
+genderSpread <- xtabs(~gender, data=police)
+genderSpread
+rowPerc(genderSpread)
+```
+
+**Fatal police shootings each month of each year**
+
+There doesn't seem to be any trends when it comes to how many police shootings occur in each month or if a specific year had more than another.
+
+```{r}
+#separate the date variable and replace columns
+police <- separate(police, "date", c("Year", "Month", "Day"), sep = "-")
+
+#plot of number of fatal shootings by month
+monthyear = count(police, vars = c("Month","Year"))
+ggplot(data = monthyear) + geom_bar(aes(x = Month, y = freq, fill = Year), color="black", stat="identity")
+```
+
+
+**Gender & Race**
+
+The spread seems fairly similar between the genders and races
+
+- excluding entry 2659 (no gender given) for ease of display 
+
+```{r}
+genderRace <- xtabs(~gender+race, exclude = "", data=police)
+genderRace
+#percent of gender in each race
+rowPerc(genderRace)
+```
+
+
+**Gender & Manner of Death**
+```{r}
+genderMOD <- xtabs(~gender+manner_of_death, exclude = "", data=police)
+genderMOD
+#percent of each manner of death by gender
+rowPerc(genderMOD)
+plot(genderMOD)
+```
+
+**Gender & Threat Level**
+
+It seems to be that both Male and Female have a similar spread of their threat levels.
+
+```{r}
+genderThreat <- xtabs(~gender+threat_level, exclude = "", data=police)
+genderThreat
+#percent of each threat level response by gender
+rowPerc(genderThreat)
+plot(genderThreat)
+```
+
+**Gender & Signs of Mental Illness**
+
+It's interesting to see that the Females involved in police shootings are more likely to have signs of mental illnesses when compared with men.
+
+```{r}
+genderMental <- xtabs(~gender+signs_of_mental_illness, exclude = "", data=police)
+genderMental
+#percent of mental illness response by gender
+rowPerc(genderMental)
+plot(genderMental)
+```
+
+**Gender & Fleeing**
+
+It looks as though Male and Female individuals have similar flee responses.
+
+```{r}
+#gender + flee
+genderFlee <- xtabs(~gender+flee, exclude = "", data=police)
+plot(genderFlee)
+```
+
+
+**Gender spread of Fleeing & Race**
+
+```{r}
+#gender + flee + race
+genderFleeRace <- xtabs(~gender+flee+race, exclude = "", data=police)
+ftable(genderFleeRace)
+```
+
+# Answer to Question 1
+
+**Are there major differences between Male and Female circumstances in fatal police shootings?**
+
+When analyzing the relations between these 5 different variables with regards to gender, there doesn't seem to be any extreme differences when it comes to the spread of variables separated by gender. What I did find interesting, was the 
+10% difference with signs of mental illnesses. According to the data descriptions, "News reports have indicated the victim had a history of mental health issues, expressed suicidal intentions or was experiencing mental distress at the time of the shooting." I'm not sure whether this could be due to the fact that since males are more involved in these fatal police shootings, that when females are involved, since it is less likely, the reason they are is because of this higher chance of having signs of mental illness. Since the spread of the other variables when separated by gender don't seem to have much of a significant difference.
+
+# Race 
+**Are different races more likely to be involved in fatal police shootings with similar situations?**
+
+**The spread of race of the individuals involved in police shootings**
+```{r}
+#spread of races involved in the shootings
+raceSpread <- xtabs(~race, data=police)
+raceSpread
+rowPerc(raceSpread)
+plot(raceSpread)
+```
+
+
+**Race & Threat Level**
+
+There doesn't seem to be much of a difference in the spread of the different threat levels between each race.
+
+```{r}
+raceThreat <- xtabs(~race+threat_level, data=police)
+raceThreat
+#percent of each threat level response by race
+rowPerc(raceThreat)
+#visual of the spread of the data
+plot(raceThreat)
+```
+
+**Race & Armed**
+
+There doesn't seem to be one race with a significant difference in percents with how they were armed.
+
+```{r}
+#race on x axis for ease of display
+raceArmed <- xtabs(~armed+race, data=police)
+raceArmed
+#percent of each armed response by race
+colPerc(raceArmed)
+```
+
+**Race & Fleeing**
+
+It seems that different races might use different methods of fleeing when they do flee but the differences in percents don't seem to be of a very big amount for the size of the data.
+
+```{r}
+raceFlee <- xtabs(~race+flee, data=police)
+raceFlee
+#percent of each flee response by race
+rowPerc(raceFlee)
+#visual of the data
+plot(raceFlee)
+```
+
+
+**Race & Manner of Death**
+
+It also doesn't look like any race is tasered before being fatally shot.
+
+```{r}
+raceMOD <- xtabs(~race+manner_of_death, data=police)
+raceMOD
+#percent of each manner of death response by race
+rowPerc(raceMOD)
+#visual of the spread of the data
+plot(raceMOD)
+```
+
+**Race & Signs of Mental Illness**
+
+There does seem to be a higher likelihood that if the individual is white, they show signs of a mental illness.
+
+```{r}
+raceMental <- xtabs(~race+signs_of_mental_illness, data=police)
+raceMental
+#percent of each mental illness response by race
+rowPerc(raceMental)
+#visual of the spread of the data
+plot(raceMental)
+```
+
+
+# Answer to Question 2
+
+**Are different races more likely to be involved in fatal police shootings with similar situations?**
+
+When analyzing the relations between these 5 different variables with regards to race, there doesn't seem to be any extreme differences when it comes to the spread of variables separated by race. The only significant differences seem to appear with the signs of mental illnesses in each race. White individuals fatally shot by police have a higher likelihood of displaying signs of mental illness. When looking at how an individual was armed by race, there wasn't one race that had a significantly higher chance of being armed with an actual weapon or perceived weapon more than other races. When there were differences in the spread, like with knives and guns, both Asians and Other were much more likely to be armed with a knife, ~20% less likely to be armed with a gun than other races and ~10 percent more likely to be armed with a knife.
+
+
+# State
+**Are different states more likely to have fatal police shootings and if so, why?**
+
+**The spread of responses by state of individuals involved in police shootings**
+
+```{r}
+#spread of races involved in the shootings
+stateSpread <- xtabs(~state, data=police)
+stateSpread
+#percent of fatal shootings by state
+rowPerc(stateSpread)
+```
+
+
+**State & Manner of Death**
+
+California, Texas, and Florida have the highest number of shootings of the total/all 50 states. This makes sense as they are the 3 most populated states.
+
+```{r}
+stateMOD <- xtabs(~state+manner_of_death, data=police)
+stateMOD
+#percent of the total of each type of death for each state
+colPerc(stateMOD)
+```
+
+
+**State & Race**
+
+This is very interesting to look at and see which races are involved in more police shootings per state. It doesn't seem like overall there's a common pattern, each state seems to have their own spread of the races of the individuals shot by police. A further investigation into the spread of races in each state would need to be done in order to check if the percentages and numbers here are consistent with the states' percentages.
+
+```{r}
+stateRace <- xtabs(~state+race, data=police)
+stateRace
+#percent of each Race by state
+rowPerc(stateRace)
+```
+
+
+**State & Signs of Mental Illness**
+
+```{r}
+stateMental <- xtabs(~state+signs_of_mental_illness, data=police)
+stateMental
+#percent of each sign of mental illness response by state
+rowPerc(stateMental)
+```
+
+
+**State & Flee**
+
+There doesn't seem to be any big differences between the percents of types of fleeing between states. The states that do have very odd numbers have a very low amount of fatal shootings so it's hard to tell if it's consistent or just because of low population size.
+
+```{r}
+stateFlee <- xtabs(~state+flee, data=police)
+stateFlee
+#percent of each flee response by state
+rowPerc(stateFlee)
+```
+
+
+# Answer to Question 3
+
+**Are different states more likely to have fatal police shootings and if so, why?**
+
+When analyzing the relations between these 5 different variables with regards to states, there doesn't seem to be any extreme differences when it comes to the spread of variables separated by state There would need to be a deeper investigation into the racial spreads of the individual states in order to see if the percentages of the races involved in fatal police shootings is consistent with the percentages of races of the overall states. There's some discrepancies 
+with states having big differences when you look at the percents of flee responses, mental illness signs, etc. but, like the analysis of race with the different variables involved, the states involved had very few fatal shootings so it's hard to know if it's the normal. California, Texas, and Florida have the 3 most fatal shootings which is accurate with them also having the 3 largest state populations.
+
+
+# Summary of Results / Answers to Questions
+Overall there doesn't seem to be any extreme results or major differences when checking the ratios of the responses with regards to the main variable in question. When analyzing the spread of variables with gender, females tended to have a ~10% higher chance of showing signs of mental illness. With race, white males tended to have a higher likelihood of showing signs of mental illness as well. Asians and Other were also about 10% more likely to be armed with a knife than the other races and roughly 20% less likely to be armed with a gun than the other races included. 
