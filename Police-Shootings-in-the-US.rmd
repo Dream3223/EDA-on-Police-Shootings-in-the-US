@@ -32,7 +32,9 @@ The data I will be using are from [The Washington Post](https://www.washingtonpo
 **date:** the date of the fatal shooting in YYYY-MM-DD format
 
 **manner_of_death:**
+
 * shot
+
 * shot and Tasered
 
 **armed:** indicates that the victim was armed with some sort of implement that a police officer believed could inflict harm

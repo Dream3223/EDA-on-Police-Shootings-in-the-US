@@ -40,7 +40,11 @@ article, the data:
 
 **date:** the date of the fatal shooting in YYYY-MM-DD format
 
-**manner_of_death:** \* shot \* shot and Tasered
+**manner_of_death:**
+
+- shot
+
+- shot and Tasered
 
 **armed:** indicates that the victim was armed with some sort of
 implement that a police officer believed could inflict harm
@@ -235,7 +239,7 @@ monthyear = count(police, vars = c("Month","Year"))
 ggplot(data = monthyear) + geom_bar(aes(x = Month, y = freq, fill = Year), color="black", stat="identity")
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 **Gender & Race**
 
@@ -289,7 +293,7 @@ rowPerc(genderMOD)
 plot(genderMOD)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 **Gender & Threat Level**
 
@@ -320,7 +324,7 @@ rowPerc(genderThreat)
 plot(genderThreat)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 **Gender & Signs of Mental Illness**
 
@@ -352,7 +356,7 @@ rowPerc(genderMental)
 plot(genderMental)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 **Gender & Fleeing**
 
@@ -365,7 +369,7 @@ genderFlee <- xtabs(~gender+flee, exclude = "", data=police)
 plot(genderFlee)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 **Gender spread of Fleeing & Race**
 
@@ -434,7 +438,7 @@ rowPerc(raceSpread)
 plot(raceSpread)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 **Race & Threat Level**
 
@@ -476,7 +480,7 @@ rowPerc(raceThreat)
 plot(raceThreat)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 **Race & Armed**
 
@@ -833,7 +837,7 @@ rowPerc(raceFlee)
 plot(raceFlee)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 **Race & Manner of Death**
 
@@ -874,7 +878,7 @@ rowPerc(raceMOD)
 plot(raceMOD)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 **Race & Signs of Mental Illness**
 
@@ -916,7 +920,7 @@ rowPerc(raceMental)
 plot(raceMental)
 ```
 
-![](policeshootings_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](Police-Shootings-in-the-US_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 # Answer to Question 2
 
